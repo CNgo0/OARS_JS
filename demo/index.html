@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>OARS JavaScript Demo</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link rel="stylesheet" href="">
+        <style>
+        </style>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="../oars.js"></script>
+        <script>
+            let keyContents = null;
+
+            function loadKeyFile()
+            {
+                let fileObject = document.getElementById('keyFile').files[0];
+                let reader = new FileReader();
+                reader.onload = function(e)
+                {
+                    keyContents = e.target.result;
+                }
+                reader.readAsText(fileObject);
+            }
+
+            function uploadFile(e)
+            {
+                e.preventDefault();
+
+                if(!keyContents) alert('Key file missing!');
+
+                let uploadFIle = document.getElementById('uploadFile').files[0];
+
+                let myOarsConfig = new OarsConfiguration('demo', keyContents);
+                myOarsConfig.SetEnvironment(OarsApiEnv.Development, OarsDbEnv.Development);
+
+                let oars = new Oars();
+                let downloadResult = oars.Download(myOarsConfig, 'test.txt');
+            }
+
+            function init()
+            {
+                document.getElementById('keyFile').onchange = loadKeyFile;
+                document.getElementById('uploadFileForm').onsubmit = uploadFile;
+            }
+
+            window.onload = init;
+        </script>
+    </head>
+    <body>
+        <form id="uploadFileForm">
+            Project public key<br>
+            <input type="file" id="keyFile" name="keyFile"><br>
+            <br>
+            To upload<br>
+            <input type="file" id="uploadFile" name="uploadFile"><br>
+            <br>
+            <input type="submit" value="Upload">
+          </form>
+    </body>
+</html>
